@@ -11,7 +11,7 @@ import os
 #############################################
 
 # DEFINE PATH TO FOLDER WITH IMAGES
-DATASET_PATH = "../Dataset/color_dataset/plot_images/"
+DATASET_PATH = "../path/to/images/" # Change this to correct folder
 
 # DEFINE PARAMETERS
 NUM_CLASSES = 2
@@ -21,9 +21,11 @@ N_EPOCH     = 2
 # CREATE ARRAY OF FILENAMES
 img_arrary = []
 lbl_arrary = []
-for image in os.listdir(DATASET_PATH):
-    if image[-3:] in ["png", "jpg", "jpeg", "bmp"]:
-        img_arrary.append(DATASET_PATH + image)
+# Loop trough all files in folder
+for current_file in os.listdir(DATASET_PATH):
+    # Check that current file is an image (Folder could contain other filetypes)
+    if current_file[-3:] in ["png", "jpg", "peg", "bmp"]:
+        img_arrary.append(DATASET_PATH + current_file)
         lbl_arrary.append(random.randint(0,1))  # (Append own labels here instead of random labels)
 
 # Check that both arrays are same size
@@ -68,14 +70,18 @@ with tf.Session() as sess:
 
     # Compute for N_EPOCH epochs.
     for _ in range(N_EPOCH):
+        # Initialize iterator
         sess.run(iterator.initializer)
+
+        # Loop through dataset until all elements have been loaded
         while True:
             try:
-                # Load new batch
+                # Load new batch of size BATCH_SIZE
                 current_batch = sess.run(next_element)
-                # [Use current batch to train model here]
+                # Use current_batch to train model here
             except tf.errors.OutOfRangeError:
+                # End of dataset, all elements have been loaded. Epoch done. Break out of loop
                 break
 
-        # [Perform end-of-epoch calculations here.]
+        # [End of epoch. Perform validation of training here]
         print('Perform end-of-epoch calculations here')
